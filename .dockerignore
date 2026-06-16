@@ -1,0 +1,14 @@
+.git
+.venv
+venv
+env
+__pycache__
+.pytest_cache
+*.pyc
+*.db
+*.sqlite
+*.sqlite3
+*.pcap
+*.pcapng
+.env
+.env.*
