@@ -1,6 +1,6 @@
 # meli-traffic-challenge
 
-Python CLI project for a technical challenge focused on Support N2 / Infrastructure.
+Python CLI project for a technical focused on Support / Infrastructure.
 
 The application will later capture network packets, save traffic data in SQLite, and display basic statistics. This initial version only provides the project structure and a prepared CLI.
 
