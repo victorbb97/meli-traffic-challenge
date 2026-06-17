@@ -37,3 +37,25 @@ def test_cli_accepts_offline_pcap_file():
     assert args.db_path == "data/test.db"
     assert args.pcap_file == "samples/capture.pcap"
 
+
+def test_cli_accepts_live_capture_arguments():
+    parser = build_parser()
+
+    args = parser.parse_args(
+        [
+            "--interface",
+            "eth0",
+            "--timeout",
+            "30",
+            "--count",
+            "50",
+            "--db-path",
+            "traffic.db",
+        ]
+    )
+
+    assert args.interface == "eth0"
+    assert args.timeout == 30
+    assert args.count == 50
+    assert args.db_path == "traffic.db"
+    assert args.pcap_file is None
