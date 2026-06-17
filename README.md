@@ -1,6 +1,10 @@
 # meli-traffic-challenge
 
+<<<<<<< HEAD
 Projeto Python CLI para um desafio técnico com foco em **Support N2 / Infrastructure**.
+=======
+Python CLI project for a technical focused on Support / Infrastructure.
+>>>>>>> 982feb1655a1ad891f8bfd01150afbbaa0f1bd17
 
 A aplicação lê pacotes a partir de um arquivo `.pcap` ou captura pacotes de uma interface de rede, armazena metadados normalizados em SQLite e exibe estatísticas básicas de tráfego no terminal.
 
