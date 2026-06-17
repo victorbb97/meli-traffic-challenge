@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 .pytest_cache/
+.pytest-tmp/
+tmp/
+pytest_temp/
 .coverage
 htmlcov/
 
@@ -27,4 +30,3 @@ env/
 .vscode/
 .DS_Store
 Thumbs.db
-

@@ -3,6 +3,11 @@
 from __future__ import annotations
 
 import argparse
+import sys
+
+from app.capture import capture_packets, read_packets_from_pcap
+from app.statistics import calculate_statistics, format_statistics
+from app.storage import initialize_database, insert_packets
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -10,8 +15,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="meli-traffic-challenge",
         description=(
-            "Prepare network traffic capture settings. Real packet capture "
-            "will be implemented in a future version."
+            "Capture or read network packets, save them in SQLite, and show "
+            "basic traffic statistics."
         ),
     )
 
@@ -46,17 +51,27 @@ def build_parser() -> argparse.ArgumentParser:
 
 def run(args: argparse.Namespace) -> int:
     """Run the CLI command."""
-    print("meli-traffic-challenge")
-    print("Network packet capture is not implemented yet.")
-    print(f"Interface: {args.interface or 'not provided'}")
-    print(f"Timeout: {args.timeout} seconds")
-    print(f"Packet count: {args.count}")
-    print(f"Database path: {args.db_path}")
+    if not args.pcap_file and not args.interface:
+        print(
+            "Error: provide --pcap-file for offline analysis or --interface "
+            "for live capture.",
+            file=sys.stderr,
+        )
+        return 2
 
-    if args.pcap_file:
-        print(f"Offline pcap file: {args.pcap_file}")
-    else:
-        print("Offline pcap file: not provided")
+    try:
+        if args.pcap_file:
+            packets = read_packets_from_pcap(args.pcap_file)
+        else:
+            packets = capture_packets(args.interface, args.timeout, args.count)
+
+        initialize_database(args.db_path)
+        insert_packets(args.db_path, packets)
+        summary = calculate_statistics(args.db_path)
+        print(format_statistics(summary))
+    except Exception as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        return 1
 
     return 0
 
@@ -66,4 +81,3 @@ def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     return run(args)
-
