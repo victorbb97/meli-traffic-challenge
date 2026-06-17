@@ -1,4 +1,4 @@
-"""Generate a small reproducible pcap file for offline tests."""
+"""Generate a reproducible pcap file for offline demonstrations."""
 
 from __future__ import annotations
 
@@ -27,11 +27,50 @@ def main() -> int:
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    packets = [
-        IP(src="192.168.0.10", dst="8.8.8.8") / TCP(sport=12345, dport=443),
-        IP(src="192.168.0.20", dst="1.1.1.1") / UDP(sport=5353, dport=53),
-        IP(src="192.168.0.30", dst="8.8.4.4") / ICMP(),
+    top_sources = [
+        ("10.0.0.1", 12),
+        ("10.0.0.2", 10),
+        ("10.0.0.3", 8),
+        ("10.0.0.4", 6),
+        ("10.0.0.5", 5),
     ]
+    extra_sources = [(f"10.0.1.{index}", 1) for index in range(1, 16)]
+    source_pool = [
+        source
+        for source, occurrences in top_sources + extra_sources
+        for _ in range(occurrences)
+    ]
+
+    top_destinations = [
+        ("203.0.113.10", 13),
+        ("203.0.113.20", 11),
+        ("203.0.113.30", 9),
+        ("203.0.113.40", 7),
+        ("203.0.113.50", 6),
+    ]
+    extra_destinations = [(f"198.51.100.{index}", 1) for index in range(1, 11)]
+    destination_pool = [
+        destination
+        for destination, occurrences in top_destinations + extra_destinations
+        for _ in range(occurrences)
+    ]
+
+    packets = []
+    for index, (source, destination) in enumerate(zip(source_pool, destination_pool)):
+        if index % 3 == 0:
+            packet = IP(src=source, dst=destination) / TCP(
+                sport=10000 + index,
+                dport=443,
+            )
+        elif index % 3 == 1:
+            packet = IP(src=source, dst=destination) / UDP(
+                sport=20000 + index,
+                dport=53,
+            )
+        else:
+            packet = IP(src=source, dst=destination) / ICMP()
+
+        packets.append(packet)
 
     wrpcap(str(output_path), packets)
     print(f"Generated pcap: {output_path}")
