@@ -64,6 +64,13 @@ Offline pcap analysis:
 python -m app.main --pcap-file samples/capture.pcap --db-path traffic.db
 ```
 
+Offline demo with generated test pcap:
+
+```bash
+python scripts/generate_test_pcap.py
+python -m app.main --pcap-file samples/test.pcap --db-path traffic.db
+```
+
 Live capture:
 
 ```bash
